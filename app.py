@@ -34,17 +34,16 @@ def calling_api():
         url = "https://qgux9ug2s3.execute-api.us-east-1.amazonaws.com/bedrock-stage/"
         my_request = {'text': txt, 'rules': rules()}
         response = requests.post(url, json=my_request)
-        data = response.json()['body']
-        summary = json.loads(data)
-    st.success(summary['completion']) 
+        if response.status_code != 200:
+            ##raise Exception(response.status_code, response.text)
+            st.error(response.status_code, response.text)   
+        else:
+            data = response.json()['body']
+            summary = json.loads(data)
+            st.success(summary['completion']) 
+     ##   st.success(data)
          
 
 if st.button('Submit'):
     calling_api()
 
-def lambda_handler(event, context):
-        print(event)
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Hello from Lambda!')
-     }
